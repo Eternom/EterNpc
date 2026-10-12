@@ -1,0 +1,9 @@
+npc:
+  usage: '<error>Usage: <accent>/eternpc list</accent>, <accent>place \<npc></accent>, <accent>remove</accent>, <accent>reload'
+  list: '<info>NPCs defined here <dark_gray>(placements)</dark_gray>: <accent><npcs>'
+  list-empty: '<info>No NPC defined on this server.'
+  reloaded: '<info>NPC placements reloaded.'
+  unknown: '<error>Unknown NPC here: <accent><npc></accent>. See <accent>/eternpc list</accent>.'
+  placed: '<info>NPC <accent><npc></accent> placed here.'
+  removed: '<info>Placement of NPC <accent><npc></accent> removed.'
+  none-near: '<error>No NPC within <accent><radius></accent> blocks.'

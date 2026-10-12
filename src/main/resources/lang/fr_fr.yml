@@ -1,0 +1,9 @@
+npc:
+  usage: '<error>Utilisation : <accent>/eternpc list</accent>, <accent>place \<pnj></accent>, <accent>remove</accent>, <accent>reload'
+  list: '<info>PNJ définis ici <dark_gray>(emplacements)</dark_gray> : <accent><npcs>'
+  list-empty: '<info>Aucun PNJ défini sur ce serveur.'
+  reloaded: '<info>Emplacements des PNJ relus.'
+  unknown: '<error>PNJ inconnu ici : <accent><npc></accent>. Voir <accent>/eternpc list</accent>.'
+  placed: '<info>PNJ <accent><npc></accent> placé ici.'
+  removed: '<info>Emplacement du PNJ <accent><npc></accent> retiré.'
+  none-near: '<error>Aucun PNJ à moins de <accent><radius></accent> blocs.'
