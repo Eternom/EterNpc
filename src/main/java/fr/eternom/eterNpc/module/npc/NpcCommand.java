@@ -52,7 +52,7 @@ public class NpcCommand implements TabExecutor {
             }
             case "remove" -> {
                 if (sender instanceof Player player) {
-                    npcs.removeNearest(player.getLocation(), REMOVE_RADIUS, removed -> removed.ifPresentOrElse(
+                    npcs.removeNearest(player.getLocation(), REMOVE_RADIUS, npc -> true, removed -> removed.ifPresentOrElse(
                             id -> messages.send(player, "npc.removed", "npc", id),
                             () -> messages.send(player, "npc.none-near", "radius", String.valueOf((int) REMOVE_RADIUS))));
                 } else {

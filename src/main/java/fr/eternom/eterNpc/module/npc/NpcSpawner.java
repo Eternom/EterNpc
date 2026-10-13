@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 /**
@@ -116,9 +117,10 @@ public class NpcSpawner {
         return (int) placements.values().stream().filter(placement -> placement.npc().equals(npc)).count();
     }
 
-    /** Emplacement le plus proche de location, dans un rayon de radius blocs. */
-    public Optional<Placement> nearest(Location location, double radius) {
+    /** Emplacement le plus proche de location, dans un rayon de radius blocs, parmi les PNJ acceptés par which. */
+    public Optional<Placement> nearest(Location location, double radius, Predicate<String> which) {
         return placements.values().stream()
+                .filter(placement -> which.test(placement.npc()))
                 .filter(placement -> placement.world().equals(location.getWorld().getName()))
                 .filter(placement -> distanceSquared(placement, location) <= radius * radius)
                 .min(Comparator.comparingDouble(placement -> distanceSquared(placement, location)));

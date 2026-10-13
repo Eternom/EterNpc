@@ -17,7 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public final class Main extends JavaPlugin {
 
-    private static final String REQUIRED_ETERLIB = "1.13.0";
+    private static final String REQUIRED_ETERLIB = "1.14.0";
     private static final String TABLE_PREFIX = "eternpc_";
 
     private Messages messages;

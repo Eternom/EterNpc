@@ -6,7 +6,7 @@ ses PNJ et répondre à leurs clics. Document développeur, à tenir à jour ave
 
 ## Prérequis
 
-- **EterLib 1.13.0+** (`depend`) : base, Redis et bus réseau, langues.
+- **EterLib 1.14.0+** (`depend`) : base (dont `insertReturningId`), Redis et bus réseau, langues.
 - **EterHub** (facultatif, `softdepend`) : sa présence signale un lobby (emplacements communs à tous les lobbys).
 
 ## Fonctionnement
@@ -33,7 +33,7 @@ Mannequin porte l'identifiant de son PNJ (données persistantes de l'entité) po
 `fr.eternom.eterNpc.api.NpcApi` (`NpcApi.get()`), `compileOnly("com.github.Eternom:EterNpc:<tag>")` :
 
 - `define(plugin, NpcLook)` / `undefine(id)` : apparence d'un PNJ sur ce serveur (thread principal) ;
-- `place(id, location, done)`, `removeNearest(location, rayon, done)` : poser ou retirer ici (thread principal) ;
+- `place(id, location, done)`, `removeNearest(location, rayon, quels PNJ, done)` : poser ou retirer ici (thread principal) ;
 - `deletePlacements(id)` : tous ses emplacements du réseau ; `importPlacement(...)` : reprise de données (bloquants) ;
 - `npcOf(entité)`, `placedHere(id)` ;
 - événement `NpcClickEvent` (joueur, identifiant) : clic droit, une fois (main principale).

@@ -39,9 +39,7 @@ public class PlacementRepository {
 
     /** @return l'identifiant de l'emplacement */
     public long add(String npc, String scope, String world, double x, double y, double z, float yaw) {
-        database.insert(PLACEMENTS, Map.of("npc", npc, "scope", scope, "world", world, "x", x, "y", y, "z", z, "yaw", yaw));
-        return database.query("SELECT MAX(id) AS id FROM " + database.table(PLACEMENTS) + " WHERE npc = ? AND scope = ?", npc, scope)
-                .getFirst().getLong("id");
+        return database.insertReturningId(PLACEMENTS, Map.of("npc", npc, "scope", scope, "world", world, "x", x, "y", y, "z", z, "yaw", yaw));
     }
 
     public void remove(long id) {

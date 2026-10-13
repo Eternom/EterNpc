@@ -7,6 +7,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * Les PNJ du réseau (Mannequins natifs). EterNpc les fait apparaître, tourner la tête et réapparaître, et enregistre
@@ -33,8 +34,16 @@ public interface NpcApi {
     /** Thread principal. Place le PNJ là où est location (direction comprise) ; done ensuite, sur le thread principal. */
     void place(String id, Location location, Runnable done);
 
-    /** Thread principal. Retire l'emplacement le plus proche (rayon en blocs) ; done reçoit le PNJ retiré, ou rien. */
-    void removeNearest(Location location, double radius, Consumer<Optional<String>> done);
+    /**
+     * Thread principal. Retire l'emplacement le plus proche (rayon en blocs) parmi les PNJ acceptés par which (ex : ceux
+     * d'un plugin) ; done reçoit le PNJ retiré, ou rien.
+     */
+    void removeNearest(Location location, double radius, Predicate<String> which, Consumer<Optional<String>> done);
+
+    /** Comme ci-dessus, parmi tous les PNJ (EterNpc 1.0.0). */
+    default void removeNearest(Location location, double radius, Consumer<Optional<String>> done) {
+        removeNearest(location, radius, npc -> true, done);
+    }
 
     /** Bloquant. Supprime tous les emplacements de ce PNJ, sur tout le réseau. */
     void deletePlacements(String id);

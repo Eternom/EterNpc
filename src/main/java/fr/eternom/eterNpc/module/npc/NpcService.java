@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 /**
@@ -98,8 +99,8 @@ public class NpcService implements NpcApi {
     }
 
     @Override
-    public void removeNearest(Location location, double radius, Consumer<Optional<String>> done) {
-        Optional<Placement> nearest = spawner.nearest(location, radius);
+    public void removeNearest(Location location, double radius, Predicate<String> which, Consumer<Optional<String>> done) {
+        Optional<Placement> nearest = spawner.nearest(location, radius, which);
         if (nearest.isEmpty()) {
             done.accept(Optional.empty());
             return;
