@@ -345,7 +345,6 @@ public class NpcSpawner {
                 EquipmentSlot.LEGS, EquipmentSlot.FEET)) {
             Material material = style.equipment().get(slot);
             mannequin.getEquipment().setItem(slot, material == null ? null : ItemStack.of(material));
-            mannequin.getEquipment().setDropChance(slot, 0);
         }
         Pose pose = pose(style.pose());
         mannequin.setPose(Mannequin.validPoses().contains(pose) ? pose : Pose.STANDING, true);
