@@ -21,14 +21,22 @@ repositories {
 }
 
 dependencies {
+    // Tests de la logique pure (dialogues)
+    testImplementation(platform("org.junit:junit-bom:5.11.4"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     compileOnly("io.papermc.paper:paper-api:26.2.build.129-stable")
 
     // Socle commun : base, Redis (bus réseau), langues (plugin EterLib installé sur le serveur)
-    compileOnly("com.github.Eternom:EterLib:1.20.1")
+    compileOnly("com.github.Eternom:EterLib:1.22.0")
 }
 
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(25)
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 tasks {

@@ -10,7 +10,7 @@ public class Commands {
 
     public Commands(Main main) {
         PluginCommand npc = Objects.requireNonNull(main.getCommand("eternpc"), "Commande absente du plugin.yml : eternpc");
-        NpcCommand executor = new NpcCommand(main.getNpcs(), main.getMessages());
+        NpcCommand executor = new NpcCommand(main, main.getNpcs(), main.getOwn(), main.getMessages());
         npc.setExecutor(executor);
         npc.setTabCompleter(executor);
     }

@@ -1,19 +1,25 @@
 package fr.eternom.eterNpc.api;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.time.Duration;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
  * Les PNJ du réseau (Mannequins natifs). EterNpc les fait apparaître, tourner la tête et réapparaître, et enregistre
- * OÙ ils sont placés. Le plugin qui possède un PNJ garde ses données (rôle, boutique...) et donne son apparence avec
- * {@link #define} à chaque démarrage ; un clic arrive par {@link NpcClickEvent}.
- * Un emplacement posé sur un lobby (EterHub) est commun à tous les lobbys, même créés plus tard.
+ * OÙ ils sont placés. Le plugin qui possède un PNJ garde ses données et donne son apparence avec {@link #define} à chaque
+ * démarrage ; un clic arrive par {@link NpcClickEvent}. EterNpc a aussi ses propres PNJ (« eternpc:... »), créés en jeu,
+ * dont les clics lancent des actions d'EterLib (« eterjob:quests mineur »...) : la plupart des plugins n'ont plus besoin
+ * de définir de PNJ, seulement de déclarer leurs actions.
+ * Un emplacement posé sur un lobby (EterHub) est commun à tous les lobbys ; sur un monde ressource, à tous les mondes
+ * ressource (config scope : @resource).
  */
 public interface NpcApi {
 
@@ -27,6 +33,9 @@ public interface NpcApi {
      * d'un plugin disparaissent quand il s'arrête.
      */
     void define(Plugin owner, NpcLook look);
+
+    /** Thread principal. Équipement, pose, taille, regard, halo, visibilité d'un PNJ défini (depuis 2.0.0). */
+    void style(String id, NpcStyle style);
 
     /** Thread principal. Le PNJ disparaît de ce serveur (ses emplacements restent enregistrés). */
     void undefine(String id);
@@ -48,6 +57,9 @@ public interface NpcApi {
     /** Bloquant. Supprime tous les emplacements de ce PNJ, sur tout le réseau. */
     void deletePlacements(String id);
 
+    /** Bloquant. Supprime les emplacements de tous les PNJ dont l'identifiant commence ainsi (ex : « etermarket: »). */
+    int deletePlacementsByPrefix(String prefix);
+
     /**
      * Bloquant. Ajoute un emplacement tel quel (reprise des données d'un plugin). scope : nom du serveur, ou
      * {@link #LOBBIES} pour tous les lobbys.
@@ -60,6 +72,18 @@ public interface NpcApi {
     /** Nombre d'emplacements de ce PNJ sur ce serveur. */
     int placedHere(String id);
 
+    /**
+     * Thread principal. Un marqueur au-dessus de la tête du PNJ, vu par ce joueur seulement (ex : « ! » quand une quête
+     * est prête) ; null le retire. Gardé tant que le joueur est connecté ici. Depuis 2.0.0.
+     */
+    void marker(Player viewer, String id, Component marker);
+
+    /** Thread principal. Une bulle de texte au-dessus du PNJ, vue par ce joueur, pendant duration. Depuis 2.0.0. */
+    void say(Player viewer, String id, Component text, Duration duration);
+
     /** Portée des emplacements posés sur un lobby : communs à tous les lobbys. */
     String LOBBIES = "@lobbies";
+
+    /** Portée des emplacements posés sur un monde ressource : communs à tous (config scope : @resource). */
+    String RESOURCE = "@resource";
 }

@@ -8,6 +8,8 @@ import fr.eternom.eterNpc.listeners.Events;
 import fr.eternom.eterNpc.module.npc.NpcService;
 import fr.eternom.eterNpc.module.npc.NpcSpawner;
 import fr.eternom.eterNpc.module.npc.PlacementRepository;
+import fr.eternom.eterNpc.module.own.OwnNpcRepository;
+import fr.eternom.eterNpc.module.own.OwnNpcs;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -17,15 +19,17 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public final class Main extends JavaPlugin {
 
-    private static final String REQUIRED_ETERLIB = "1.14.0";
+    private static final String REQUIRED_ETERLIB = "1.22.0";
     private static final String TABLE_PREFIX = "eternpc_";
 
     private Messages messages;
     private NpcService npcs;
     private NpcSpawner spawner;
+    private OwnNpcs own;
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
         try {
             if (!EterLib.requireVersion(this, REQUIRED_ETERLIB)) {
                 return;
@@ -37,20 +41,37 @@ public final class Main extends JavaPlugin {
         }
         EterLib lib = EterLib.get();
         messages = lib.messages(this, "en_us", "fr_fr");
-        // Un lobby (EterHub) : ses emplacements sont communs à tous les lobbys, même créés plus tard
-        boolean lobby = getServer().getPluginManager().getPlugin("EterHub") != null;
+        String scope = scope(lib);
         spawner = new NpcSpawner(this);
         npcs = new NpcService(this, new PlacementRepository(lib.database(TABLE_PREFIX)), spawner,
-                lib.network(this, "eternpc", messages), lobby ? NpcApi.LOBBIES : lib.getServerName());
+                lib.network(this, "eternpc", messages), scope);
+        getLogger().info("Emplacements des PNJ : portée " + scope);
         getServer().getServicesManager().register(NpcApi.class, npcs, this, ServicePriority.Normal);
+        own = new OwnNpcs(this, new OwnNpcRepository(lib.database(TABLE_PREFIX)), npcs, lib.network(this, "eternpc-own", messages), messages);
 
         new Commands(this);
         new Events(this);
         npcs.start();
+        own.start();
+    }
+
+    /**
+     * Portée des emplacements de ce serveur (config scope) : auto = « @lobbies » sur un lobby (EterHub), sinon le nom du
+     * serveur ; ou une valeur imposée, ex : « @resource » dans le modèle des mondes ressource (noms changeants).
+     */
+    private String scope(EterLib lib) {
+        String configured = getConfig().getString("scope", "auto").trim();
+        if (!configured.isEmpty() && !configured.equalsIgnoreCase("auto")) {
+            return configured;
+        }
+        return getServer().getPluginManager().getPlugin("EterHub") != null ? NpcApi.LOBBIES : lib.getServerName();
     }
 
     @Override
     public void onDisable() {
+        if (own != null) {
+            own.stop();
+        }
         if (spawner != null) {
             spawner.despawnAll();
         }
@@ -58,6 +79,10 @@ public final class Main extends JavaPlugin {
 
     public Messages getMessages() {
         return messages;
+    }
+
+    public OwnNpcs getOwn() {
+        return own;
     }
 
     public NpcService getNpcs() {

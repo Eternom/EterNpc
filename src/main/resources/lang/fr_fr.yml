@@ -1,9 +1,159 @@
 npc:
-  usage: '<error>Utilisation : <accent>/eternpc list</accent>, <accent>place \<pnj></accent>, <accent>remove</accent>, <accent>reload'
+  usage: '<error>Utilisation : <accent>/eternpc menu</accent>, <accent>create \<nom></accent>, <accent>edit [nom]</accent>, <accent>copy \<nom> \<nouveau></accent>, <accent>delete \<nom> confirm</accent>, <accent>place \<pnj></accent>, <accent>remove</accent>, <accent>move [pnj]</accent>, <accent>tp \<pnj></accent>, <accent>cleanup [préfixe confirm]</accent>, <accent>list</accent>, <accent>reload'
   list: '<info>PNJ définis ici <dark_gray>(emplacements)</dark_gray> : <accent><npcs>'
   list-empty: '<info>Aucun PNJ défini sur ce serveur.'
-  reloaded: '<info>Emplacements des PNJ relus.'
-  unknown: '<error>PNJ inconnu ici : <accent><npc></accent>. Voir <accent>/eternpc list</accent>.'
+  reloaded: '<info>PNJ et emplacements relus.'
+  unknown: '<error>PNJ inconnu : <accent><npc></accent>. Voir <accent>/eternpc menu</accent>.'
   placed: '<info>PNJ <accent><npc></accent> placé ici.'
   removed: '<info>Emplacement du PNJ <accent><npc></accent> retiré.'
+  moved: '<info>Le PNJ <accent><npc></accent> est maintenant ici.'
   none-near: '<error>Aucun PNJ à moins de <accent><radius></accent> blocs.'
+  not-here: '<error>Le PNJ <accent><npc></accent> n''est placé nulle part sur ce serveur.'
+  invalid-name: '<error>Nom invalide : lettres minuscules, chiffres, - et _ (32 au plus).'
+  exists: '<error>Le PNJ <accent><npc></accent> existe déjà.'
+  created: '<info>PNJ <accent><npc></accent> créé et placé ici. Règle-le dans l''éditeur.'
+  copied: '<info>PNJ <accent><npc></accent> copié en <accent><target></accent>, placé ici.'
+  copy-usage: '<error>Utilisation : <accent>/eternpc copy \<nom> \<nouveau></accent>'
+  delete-confirm: '<error>Supprimer <accent><npc></accent> et tous ses emplacements, partout ? <accent>/eternpc delete <npc> confirm'
+  deleted: '<info>PNJ <accent><npc></accent> supprimé, avec ses emplacements.'
+  cleanup-confirm: '<error>Supprimer tous les emplacements des PNJ <accent><prefix>*</accent> sur le réseau ? <accent>/eternpc cleanup <prefix> confirm'
+  cleaned: '<info><accent><count></accent> emplacement(s) supprimé(s).'
+  no-permission: '<error>Ce PNJ ne te répond pas.'
+  cooldown: '<error>Attends <accent><time>s</accent>.'
+  dialogue:
+    # <name> = nom du PNJ, <text> = la ligne
+    line: '<name> <dark_gray>»</dark_gray> <info><text>'
+    choice: '<accent>[<choice>]</accent>'
+    choice-hover: '<info>Clique pour choisir'
+
+# Noms traduits (nom d'un PNJ écrit « lang:<clé> » dans l'éditeur, langue par défaut du serveur)
+names:
+  guild-master: '<accent>Chef de guilde'
+
+editor:
+  title: '<primary>PNJ <dark_gray>·</dark_gray> <npc>'
+  save: 'Enregistrer'
+  saved: '<info>Enregistré.'
+  not-saved: '<error>Rien n''a été enregistré : corrige les actions et recommence.'
+  action-error: '<error><problem>'
+  current: '<dark_gray>Actuel : '
+  none: '<dark_gray>Aucun'
+  yes: '<success>oui'
+  no: '<error>non'
+  back: '<accent>« Tous les PNJ'
+  info:
+    name: '<accent><npc>'
+    placed: '<dark_gray>▸ <info>Emplacements sur ce serveur : <accent><count>'
+    clicks: '<dark_gray>▸ <info>Clics : <accent><count>'
+  name:
+    name: '<accent>Nom'
+    lore: '<dark_gray>MiniMessage, ou « lang:clé » (lang/ > names)'
+    title: '<primary>Nom de <npc>'
+    body: '<info>Le nom au-dessus de sa tête (MiniMessage).'
+    label: 'Nom'
+  description:
+    name: '<accent>Ligne sous le nom'
+    lore: '<dark_gray>Ex : « Chef de guilde ». Vide : aucune.'
+    title: '<primary>Ligne sous le nom de <npc>'
+    body: '<info>Texte sous le nom (MiniMessage), vide pour aucun.'
+    label: 'Ligne'
+  skin:
+    name: '<accent>Skin'
+    lore: '<dark_gray>Pseudo d''un joueur, ou texture (MineSkin)'
+    title: '<primary>Skin de <npc>'
+    body: '<info>Le pseudo d''un joueur, ou la valeur et la signature d''une texture (prioritaire).'
+    player: 'Pseudo'
+    value: 'Texture : valeur'
+    signature: 'Texture : signature'
+  equipment:
+    name: '<accent>Équipement'
+    lore: '<dark_gray>Clic avec un objet en main : il le porte · Maj : seconde main · clic droit : tout retirer'
+    hold: '<error>Prends en main l''objet à lui donner.'
+  pose:
+    name: '<accent>Pose'
+    lore: '<dark_gray>Clic : pose suivante'
+  scale:
+    name: '<accent>Taille'
+    lore: '<dark_gray>Clic : plus grand · clic droit : plus petit'
+  glow:
+    name: '<accent>Halo'
+    lore: '<dark_gray>Clic : activer ou retirer'
+  actions-right:
+    name: '<accent>Clic droit'
+    lore: '<dark_gray>Actions lancées, une par ligne (ex : eterjob:quests mineur)'
+    title: '<primary>Clic droit sur <npc>'
+    body: '<info>Une action par ligne. « ?condition » arrête la suite si elle est fausse. /eterlib actions pour la liste.'
+    label: 'Actions'
+  actions-left:
+    name: '<accent>Clic gauche'
+    lore: '<dark_gray>Actions lancées au coup'
+    title: '<primary>Clic gauche sur <npc>'
+    body: '<info>Une action par ligne.'
+    label: 'Actions'
+  actions-shift:
+    name: '<accent>Clic droit accroupi'
+    lore: '<dark_gray>Vide : comme le clic droit'
+    title: '<primary>Clic droit accroupi sur <npc>'
+    body: '<info>Une action par ligne ; vide pour faire comme le clic droit.'
+    label: 'Actions'
+  actions-placement:
+    title: '<primary>Actions de cet emplacement de <npc>'
+    body: '<info>Remplacent celles du clic droit, pour l''emplacement le plus proche seulement. Vide : celles du PNJ.'
+    label: 'Actions'
+  dialogue:
+    name: '<accent>Dialogue'
+    lore: '<dark_gray>Lignes dites au clic droit, et choix « > texte | actions »'
+    summary: '<info><lines> ligne(s), <choices> choix'
+    title: '<primary>Dialogue de <npc>'
+    body: '<info>Une ligne par phrase ({player} = le joueur). Un choix : « > Mes quêtes | eterjob:quests mineur ». Sans choix, les actions du clic droit suivent.'
+    label: 'Dialogue'
+  sound:
+    name: '<accent>Son'
+    lore: '<dark_gray>Joué au clic (ex : entity.villager.ambient)'
+    title: '<primary>Son de <npc>'
+    body: '<info>Clé d''un son Minecraft, vide pour aucun.'
+    label: 'Son'
+  permission:
+    name: '<accent>Permission'
+    lore: '<dark_gray>Visible et cliquable seulement avec elle'
+    title: '<primary>Permission de <npc>'
+    body: '<info>Vide : visible et cliquable par tous.'
+    label: 'Permission'
+  cooldown:
+    name: '<accent>Délai'
+    lore: '<dark_gray>Secondes entre deux clics d''un joueur'
+    title: '<primary>Délai de <npc>'
+    body: '<info>En secondes (0 : seulement contre les doubles clics).'
+    label: 'Secondes'
+    invalid: '<error>Un nombre entier de secondes.'
+  look:
+    name: '<accent>Regard'
+    lore: '<dark_gray>Clic : activer ou non · clic droit : distance'
+    on: '<success>vers le joueur le plus proche</success> <dark_gray>(<range> blocs)'
+    off: '<info>fixe'
+  place:
+    name: '<accent>Placer ici'
+    lore: '<dark_gray>Un emplacement de plus, là où tu es'
+  placement:
+    name: '<accent>Actions de cet emplacement'
+    lore: '<dark_gray>Pour l''emplacement le plus proche (5 blocs) seulement'
+  test:
+    name: '<accent>Essayer'
+    lore: '<dark_gray>Lance son clic droit sur toi'
+  delete:
+    name: '<error>Supprimer'
+    lore: '<dark_gray>Le PNJ et tous ses emplacements, partout'
+    title: '<error>Supprimer <npc> ?'
+    body: '<info><npc> et ses <accent><count></accent> emplacement(s) seront supprimés sur tout le réseau.'
+    confirm: 'Supprimer'
+
+list-menu:
+  title: '<primary>PNJ <dark_gray>· <count>'
+  placed: '<dark_gray>▸ <info>Emplacements ici : <accent><count>'
+  clicks: '<dark_gray>▸ <info>Clics : <accent><count>'
+  owner: '<dark_gray>▸ <info>Défini par <accent><plugin>'
+  edit: '<accent>Clic <dark_gray>· <info>éditer'
+  teleport: '<accent>Maj + clic <dark_gray>· <info>y aller'
+  not-own: '<error><npc> appartient à un autre plugin : il se règle avec ses commandes.'
+  previous: '<accent>« Page précédente'
+  next: '<accent>Page suivante »'

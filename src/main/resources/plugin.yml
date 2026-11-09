@@ -5,19 +5,19 @@ main: fr.eternom.eterNpc.Main
 api-version: '26.2'
 load: POSTWORLD
 authors: [ NadTum ]
-description: PNJ du réseau (Mannequins natifs) pour les plugins Eter, avec leurs emplacements.
+description: PNJ du réseau (Mannequins natifs) pour les plugins Eter, avec leurs emplacements, et PNJ créés en jeu dont les clics lancent des actions.
 depend: [EterLib]
 # Sur un lobby, les emplacements sont communs à tous les lobbys
 softdepend: [EterHub]
 
 commands:
   eternpc:
-    description: Gérer les emplacements des PNJ (staff).
-    usage: /eternpc <list|place|remove|reload>
+    description: Créer, régler et placer les PNJ (staff).
+    usage: /eternpc <menu|create|edit|copy|delete|place|remove|move|tp|cleanup|list|reload>
     aliases: [npc]
     permission: eternpc.admin
 
 permissions:
   eternpc.admin:
-    description: Gérer les emplacements des PNJ (/eternpc).
+    description: Créer, régler et placer les PNJ (/eternpc).
     default: op

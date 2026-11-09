@@ -1,0 +1,13 @@
+# ============================================================
+#  EterNpc
+# ============================================================
+#
+#  PNJ du réseau (Mannequins natifs). Les PNJ d'EterNpc se créent et se règlent en jeu : /eternpc create <nom>,
+#  puis l'éditeur (/eternpc edit). Leurs clics lancent des actions d'EterLib (/eterlib actions pour la liste).
+
+# Portée des emplacements posés sur ce serveur :
+#   auto      : « @lobbies » sur un lobby (EterHub installé), sinon le nom du serveur
+#   @lobbies  : communs à tous les lobbys
+#   @resource : communs à tous les mondes ressource (à mettre dans leur modèle : leurs noms changent)
+#   <nom>     : un nom de serveur précis
+scope: auto
