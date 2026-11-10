@@ -2,6 +2,7 @@ package fr.eternom.eterNpc.module.own;
 
 import com.google.gson.JsonObject;
 import fr.eternom.eterLib.EterLib;
+import fr.eternom.eterLib.module.quest.QuestBridge;
 import fr.eternom.eterLib.helper.cache.NetworkBus;
 import fr.eternom.eterLib.helper.message.Messages;
 import fr.eternom.eterLib.helper.task.Tasks;
@@ -54,6 +55,9 @@ public class OwnNpcs {
     private final Map<String, Long> clicks = new ConcurrentHashMap<>();
     private final NpcEditor editor;
 
+    /** Ratios de réputation (nom -> ratio), relus avec les PNJ. */
+    private volatile Map<String, Double> ratios = Map.of();
+
     public OwnNpcs(JavaPlugin plugin, OwnNpcRepository repository, NpcService npcs, NetworkBus bus, Messages messages) {
         this.plugin = plugin;
         this.repository = repository;
@@ -87,6 +91,8 @@ public class OwnNpcs {
     public void reload() {
         Tasks.async(plugin, () -> {
             List<OwnNpc> all = repository.all();
+            Map<String, Double> freshRatios = repository.ratios();
+            ratios = Map.copyOf(freshRatios);
             Bukkit.getScheduler().runTask(plugin, () -> {
                 byName.keySet().stream().filter(name -> all.stream().noneMatch(npc -> npc.name().equals(name))).toList()
                         .forEach(name -> {
@@ -96,6 +102,24 @@ public class OwnNpcs {
                 all.forEach(this::show);
             });
         }, "PNJ d'EterNpc illisibles");
+    }
+
+    /** Ratio de réputation d'un PNJ (« eternpc:fermier » ou « fermier ») : 1 par défaut. */
+    public double ratio(String id) {
+        String name = id.startsWith(OwnNpc.PREFIX) ? id.substring(OwnNpc.PREFIX.length()) : id;
+        return ratios.getOrDefault(name, 1.0);
+    }
+
+    /** Change le ratio (tout le réseau) ; after ensuite, sur le thread principal. */
+    public void setRatio(String name, double ratio, Runnable after) {
+        Tasks.async(plugin, () -> {
+            repository.setRatio(name, ratio);
+            bus.publish(RELOAD, new com.google.gson.JsonObject());
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                reload();
+                after.run();
+            });
+        }, "Ratio de réputation non enregistré");
     }
 
     public Optional<OwnNpc> get(String name) {
@@ -200,7 +224,8 @@ public class OwnNpcs {
             }
         }
         Dialogue dialogue = click == OwnNpc.Click.RIGHT ? Dialogue.parse(npc.dialogue()) : Dialogue.NONE;
-        if (actions.isEmpty() && dialogue.isEmpty()) {
+        boolean quests = click != OwnNpc.Click.LEFT && QuestBridge.available();
+        if (actions.isEmpty() && dialogue.isEmpty() && !quests) {
             return;
         }
         if (!cooldownOk(player, npc, cooldown)) {
@@ -214,6 +239,13 @@ public class OwnNpcs {
             } catch (RuntimeException ignored) {
                 // son illisible : ignoré
             }
+        }
+        // Une quête qui attend ce PNJ (parler, rendre une étape) passe avant ses actions
+        if (quests && QuestBridge.interact(player, npc.id())) {
+            return;
+        }
+        if (actions.isEmpty() && dialogue.isEmpty()) {
+            return;
         }
         if (!dialogue.isEmpty()) {
             speak(player, npc, dialogue, actions);

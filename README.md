@@ -7,7 +7,8 @@ actions, et le staff les met sur n'importe quel PNJ. Document développeur, à t
 
 ## Prérequis
 
-- **EterLib 1.22.0+** (`depend`) : base, Redis et bus réseau, langues, menus, Dialogs, **actions**, vanish.
+- **EterLib 1.25.0+** (`depend`) : base, Redis et bus réseau, langues, menus, Dialogs, **actions**, vanish, réputation,
+  pont des quêtes.
 - **EterHub** (facultatif, `softdepend`) : sa présence signale un lobby (emplacements communs à tous les lobbys).
 - Client 1.21.6+ pour les Dialogs de l'éditeur.
 
@@ -53,6 +54,13 @@ essayer, supprimer (confirmé, avec le nombre d'emplacements). Statistiques de c
 **Exemples** : chef de guilde = `eterjob:guild` ; donneur de quêtes du mineur = `eterjob:quests mineur` ; un PNJ du lobby
 qui envoie sur la survie et ouvre le menu à l'arrivée = `@survie eterjob:quests mineur` (action réseau d'EterLib).
 
+**Quêtes et réputation** (2.2.0) : un clic droit sur un PNJ d'EterNpc passe d'abord par les quêtes (EterQuest, par
+QuestBridge d'EterLib) : si une quête attend ce PNJ (lui parler, lui rendre une étape), elle s'en sert et le PNJ ne
+fait rien d'autre ce clic-là ; sinon, ses actions habituelles. Un PNJ sans aucune action peut donc servir seulement
+aux quêtes. Chaque PNJ a un **ratio de réputation** (`/eternpc reputation <nom> [ratio]`, 1 par défaut) : la
+réputation d'un joueur auprès de lui = sa réputation (EterLib) × ce ratio. Un PNJ isolé (ratio 0,8) demande plus de
+travail pour le même seuil affiché.
+
 ## API (pour les autres plugins)
 
 `fr.eternom.eterNpc.api.NpcApi` (`NpcApi.get()`), `compileOnly("com.github.Eternom:EterNpc:<tag>")` :
@@ -75,6 +83,7 @@ avec les actions d'EterJob.
 | `/eternpc create <nom>` · `edit [nom]` · `copy <nom> <nouveau>` · `delete <nom> confirm` | PNJ d'EterNpc |
 | `/eternpc place <pnj>` · `remove` · `move [pnj]` · `tp <pnj>` | Emplacements (le plus proche) |
 | `/eternpc cleanup` · `cleanup <préfixe> confirm` | Emplacements orphelins · ceux d'un ancien plugin (ex : `etermarket:`) |
+| `/eternpc reputation <nom> [ratio]` | Ratio de réputation du PNJ (0 à 10, 1 par défaut) |
 | `/eternpc list` · `reload` | Liste · rechargement |
 
 Tout demande `eternpc.admin` (op). Alias : `/npc`.
@@ -85,3 +94,4 @@ Tout demande `eternpc.admin` (op). Alias : `/npc`.
 - `eternpc_npcs` : `name`, `display`, `description`, `skin`, `texture_value`, `texture_signature`, `actions_right`,
   `actions_left`, `actions_shift`, `dialogue`, `equipment`, `pose`, `scale`, `look`, `look_range`, `glow`, `permission`,
   `sound`, `cooldown`, `clicks`.
+- `eternpc_reputation` : `name`, `ratio` (seulement les PNJ dont le ratio n'est pas 1).

@@ -30,7 +30,7 @@ import java.util.stream.Stream;
 public class NpcCommand implements TabExecutor {
 
     private static final List<String> ACTIONS = List.of("menu", "list", "reload", "create", "edit", "copy", "delete", "place",
-            "remove", "move", "tp", "cleanup");
+            "remove", "move", "tp", "cleanup", "reputation");
     private static final double RADIUS = 5;
 
     private final JavaPlugin plugin;
@@ -61,6 +61,7 @@ public class NpcCommand implements TabExecutor {
                 messages.send(sender, "npc.reloaded");
             }
             case "cleanup" -> cleanup(sender, args);
+            case "reputation" -> reputation(sender, arg, args);
             case "delete" -> {
                 if (arg == null || own.get(arg).isEmpty()) {
                     messages.send(sender, "npc.unknown", "npc", arg == null ? "?" : arg);
@@ -147,6 +148,31 @@ public class NpcCommand implements TabExecutor {
         }
     }
 
+    /** reputation <nom> [ratio] : réputation du joueur × ratio = sa réputation auprès de ce PNJ (1 par défaut). */
+    private void reputation(CommandSender sender, String arg, String[] args) {
+        if (arg == null || own.byId(arg).isEmpty()) {
+            messages.send(sender, "npc.reputation-usage");
+            return;
+        }
+        String name = own.byId(arg).get().name();
+        if (args.length < 3) {
+            messages.send(sender, "npc.reputation-ratio", "npc", name, "ratio", String.valueOf(own.ratio(name)));
+            return;
+        }
+        double ratio;
+        try {
+            ratio = Double.parseDouble(args[2].replace(',', '.'));
+        } catch (NumberFormatException e) {
+            ratio = -1;
+        }
+        if (ratio < 0 || ratio > 10) {
+            messages.send(sender, "npc.reputation-usage");
+            return;
+        }
+        double value = ratio;
+        own.setRatio(name, value, () -> messages.send(sender, "npc.reputation-set", "npc", name, "ratio", String.valueOf(value)));
+    }
+
     /**
      * cleanup : emplacements des PNJ d'EterNpc qui n'existent plus ; cleanup <préfixe> confirm : tous les emplacements
      * des PNJ dont l'identifiant commence ainsi (ex : « etermarket: » après le passage à EterJob).
@@ -199,7 +225,7 @@ public class NpcCommand implements TabExecutor {
         String action = args[0].toLowerCase(Locale.ROOT);
         if (args.length == 2) {
             return switch (action) {
-                case "edit", "copy", "delete" -> filter(own.names().stream(), args[1]);
+                case "edit", "copy", "delete", "reputation" -> filter(own.names().stream(), args[1]);
                 case "place", "tp", "move" -> filter(Stream.concat(own.names().stream(), npcs.spawner().ids().stream()
                         .filter(id -> !id.startsWith(OwnNpc.PREFIX))), args[1]);
                 case "cleanup" -> filter(Stream.of("etermarket:"), args[1]);

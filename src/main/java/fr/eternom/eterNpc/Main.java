@@ -19,7 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public final class Main extends JavaPlugin {
 
-    private static final String REQUIRED_ETERLIB = "1.22.0";
+    private static final String REQUIRED_ETERLIB = "1.25.0";
     private static final String TABLE_PREFIX = "eternpc_";
 
     private Messages messages;
@@ -53,6 +53,8 @@ public final class Main extends JavaPlugin {
         new Events(this);
         npcs.start();
         own.start();
+        // Réputation d'EterLib : réputation du joueur × ratio du PNJ (/eternpc reputation)
+        lib.getReputation().setRatioProvider(own::ratio);
     }
 
     /**

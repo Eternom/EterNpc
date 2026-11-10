@@ -13,7 +13,7 @@ softdepend: [EterHub]
 commands:
   eternpc:
     description: Créer, régler et placer les PNJ (staff).
-    usage: /eternpc <menu|create|edit|copy|delete|place|remove|move|tp|cleanup|list|reload>
+    usage: /eternpc <menu|create|edit|copy|delete|place|remove|move|tp|cleanup|reputation|list|reload>
     aliases: [npc]
     permission: eternpc.admin
 

@@ -16,10 +16,14 @@ public class OwnNpcRepository {
 
     private static final String NPCS = "npcs";
 
+    private static final String REPUTATION = "reputation";
     private final Database database;
 
     public OwnNpcRepository(Database database) {
         this.database = database;
+        database.createTable(REPUTATION,
+                Column.of("name", Column.Type.STRING).length(32).primaryKey(),
+                Column.of("ratio", Column.Type.DOUBLE).notNull());
         database.createTable(NPCS,
                 Column.of("name", Column.Type.STRING).length(32).primaryKey(),
                 Column.of("display", Column.Type.TEXT),
@@ -41,6 +45,21 @@ public class OwnNpcRepository {
                 Column.of("sound", Column.Type.STRING).length(128),
                 Column.of("cooldown", Column.Type.INT),
                 Column.of("clicks", Column.Type.LONG));
+    }
+
+    /** Ratio de réputation de chaque PNJ (EterLib : réputation × ratio) ; absent : 1. */
+    public Map<String, Double> ratios() {
+        Map<String, Double> ratios = new java.util.HashMap<>();
+        database.get(REPUTATION, Map.of()).forEach(row -> ratios.put(row.getString("name"), row.getDouble("ratio")));
+        return ratios;
+    }
+
+    public void setRatio(String name, double ratio) {
+        if (ratio == 1) {
+            database.delete(REPUTATION, Map.of("name", name));
+        } else {
+            database.set(REPUTATION, Map.of("name", name, "ratio", ratio), "name");
+        }
     }
 
     public List<OwnNpc> all() {
@@ -84,6 +103,7 @@ public class OwnNpcRepository {
 
     public void delete(String name) {
         database.delete(NPCS, Map.of("name", name));
+        database.delete(REPUTATION, Map.of("name", name));
     }
 
     /** Ajoute des clics au compteur (statistiques). */
