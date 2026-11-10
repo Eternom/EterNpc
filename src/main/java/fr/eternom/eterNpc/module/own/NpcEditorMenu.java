@@ -155,8 +155,10 @@ class NpcEditorMenu implements Menu {
     }
 
     private String nextPose() {
-        List<Pose> poses = Mannequin.validPoses().stream().filter(pose -> List.of(Pose.STANDING, Pose.SNEAKING, Pose.SITTING,
-                Pose.SLEEPING, Pose.SWIMMING, Pose.FALL_FLYING).contains(pose)).sorted((a, b) -> a.name().compareTo(b.name())).toList();
+        // « Assis » est toujours proposé : le PNJ s'assoit sur un support invisible (NpcSpawner)
+        List<Pose> poses = java.util.stream.Stream.concat(Mannequin.validPoses().stream(), java.util.stream.Stream.of(Pose.SITTING)).distinct()
+                .filter(pose -> List.of(Pose.STANDING, Pose.SNEAKING, Pose.SITTING, Pose.SLEEPING, Pose.SWIMMING, Pose.FALL_FLYING).contains(pose))
+                .sorted((a, b) -> a.name().compareTo(b.name())).toList();
         if (poses.isEmpty()) {
             return "STANDING";
         }

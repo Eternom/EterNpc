@@ -15,6 +15,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mannequin;
 import org.bukkit.entity.Player;
@@ -110,7 +111,10 @@ public class NpcSpawner {
         if (style.equals(previous)) {
             return;
         }
-        forEachAlive(id, mannequin -> applyStyle(mannequin, style));
+        forEachAlive(id, mannequin -> {
+            applyStyle(mannequin, style);
+            seat(mannequin, style);
+        });
         Bukkit.getOnlinePlayers().forEach(this::refreshVisibility);
     }
 
@@ -285,6 +289,11 @@ public class NpcSpawner {
         UUID uuid = alive.remove(placementId);
         Entity entity = uuid == null ? null : Bukkit.getEntity(uuid);
         if (entity != null) {
+            // Assis : son support invisible part avec lui
+            Entity vehicle = entity.getVehicle();
+            if (vehicle != null) {
+                vehicle.remove();
+            }
             entity.remove();
         }
     }
@@ -321,6 +330,7 @@ public class NpcSpawner {
             return;
         }
         alive.put(placement.id(), mannequin.getUniqueId());
+        seat(mannequin, style);
         if (style.permission() != null) {
             Bukkit.getOnlinePlayers().stream().filter(player -> player.hasPermission(style.permission()))
                     .forEach(player -> player.showEntity(plugin, mannequin));
@@ -347,12 +357,44 @@ public class NpcSpawner {
             mannequin.getEquipment().setItem(slot, material == null ? null : ItemStack.of(material));
         }
         Pose pose = pose(style.pose());
-        mannequin.setPose(Mannequin.validPoses().contains(pose) ? pose : Pose.STANDING, true);
+        mannequin.setPose(pose != Pose.SITTING && Mannequin.validPoses().contains(pose) ? pose : Pose.STANDING, true);
         AttributeInstance scale = mannequin.getAttribute(Attribute.SCALE);
         if (scale != null) {
             scale.setBaseValue(style.scale());
         }
         mannequin.setGlowing(style.glow());
+    }
+
+    /**
+     * Pose « assis » : Minecraft ne la permet pas à un Mannequin seul ; il monte donc sur un support invisible (porte-armure
+     * marqueur) juste sous lui, et s'affiche assis sur sa chaise ou son banc. Une autre pose : il en descend.
+     */
+    private static void seat(Mannequin mannequin, NpcStyle style) {
+        boolean sitting = pose(style.pose()) == Pose.SITTING;
+        Entity vehicle = mannequin.getVehicle();
+        if (!sitting) {
+            if (vehicle instanceof ArmorStand) {
+                mannequin.leaveVehicle();
+                vehicle.remove();
+            }
+            return;
+        }
+        if (vehicle != null) {
+            return;
+        }
+        Location at = mannequin.getLocation().subtract(0, 0.2, 0);
+        ArmorStand seat = mannequin.getWorld().spawn(at, ArmorStand.class, stand -> {
+            stand.setInvisible(true);
+            stand.setMarker(true);
+            stand.setGravity(false);
+            stand.setSmall(true);
+            stand.setInvulnerable(true);
+            stand.setPersistent(false);
+            stand.setSilent(true);
+        });
+        if (seat.isValid()) {
+            seat.addPassenger(mannequin);
+        }
     }
 
     static Pose pose(String name) {

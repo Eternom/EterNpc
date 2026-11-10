@@ -24,7 +24,7 @@ déplacer ou retirer prévient les autres serveurs (bus `eternpc`, message `relo
 **Mannequins** (`NpcSpawner`) : invulnérables, immobiles, silencieux ; tout dégât et tout feu sont annulés, et un PNJ
 disparu réapparaît (vérifié toutes les 5 s). **Jamais enregistrés dans le monde** : ils apparaissent avec le chunk de
 leur emplacement et disparaissent avec lui. Chaque Mannequin porte l'identifiant de son PNJ et de son emplacement.
-**Allure** (`NpcStyle`) : équipement, pose, taille, regard (activable, distance ; ignore spectateurs et joueurs en vanish),
+**Allure** (`NpcStyle`) : équipement, pose (dont « assis » : le PNJ monte sur un support invisible, Minecraft ne permettant pas cette pose seule), taille, regard (activable, distance ; ignore spectateurs et joueurs en vanish),
 halo, et **permission** (le PNJ n'est visible et cliquable qu'avec elle).
 
 **Au-dessus de la tête** (`Overlays`), pour UN joueur : un **marqueur** (`NpcApi#marker`, ex : « ! » quand une quête est
