@@ -1,5 +1,7 @@
 package fr.eternom.eterNpc.module.own;
 
+import fr.eternom.eterLib.helper.gui.BackButton;
+import fr.eternom.eterLib.EterLib;
 import fr.eternom.eterLib.helper.gui.Frame;
 import fr.eternom.eterLib.helper.gui.Items;
 import fr.eternom.eterLib.helper.gui.Menu;
@@ -25,6 +27,8 @@ class NpcListMenu implements Menu {
             37, 38, 39, 40, 41, 42, 43};
     private static final int PREVIOUS = 45;
     private static final int NEXT = 53;
+    private static final int BACK = 49;
+    private final BackButton back = EterLib.get().backButton("close");
 
     private final OwnNpcs npcs;
     private final NpcEditor editor;
@@ -46,10 +50,15 @@ class NpcListMenu implements Menu {
         this.page = Math.clamp(page, 0, pages - 1);
         this.inventory = Bukkit.createInventory(this, 54, messages.get(viewer, "list-menu.title", "count", String.valueOf(all.size())));
         render(pages);
+        inventory.setItem(BACK, back.item(viewer));
     }
 
     @Override
     public void onClick(Player player, int slot, ClickType click) {
+        if (slot == BACK) {
+            back.click(player);
+            return;
+        }
         if (slot == PREVIOUS || slot == NEXT) {
             Sounds.page(player);
             player.openInventory(new NpcListMenu(npcs, editor, player, page + (slot == NEXT ? 1 : -1)).getInventory());
