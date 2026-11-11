@@ -112,10 +112,10 @@ class NpcListMenu implements Menu {
             inventory.setItem(SLOTS[i], Items.item(own ? Material.PLAYER_HEAD : Material.SKELETON_SKULL, name, lore));
         }
         if (page > 0) {
-            inventory.setItem(PREVIOUS, Items.item(Material.ARROW, messages.get(viewer, "list-menu.previous"), List.of()));
+            inventory.setItem(PREVIOUS, Items.item(Material.ARROW, messages.get(viewer, "list-menu.previous"), List.of(messages.get(viewer, "menu.page-of", "page", String.valueOf(page + 1), "pages", String.valueOf(pages)))));
         }
         if (page < pages - 1) {
-            inventory.setItem(NEXT, Items.item(Material.ARROW, messages.get(viewer, "list-menu.next"), List.of()));
+            inventory.setItem(NEXT, Items.item(Material.ARROW, messages.get(viewer, "list-menu.next"), List.of(messages.get(viewer, "menu.page-of", "page", String.valueOf(page + 1), "pages", String.valueOf(pages)))));
         }
     }
 

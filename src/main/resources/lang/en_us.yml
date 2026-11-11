@@ -158,3 +158,6 @@ list-menu:
   not-own: '<error><npc> belongs to another plugin: use its commands.'
   previous: '<accent>« Previous page'
   next: '<accent>Next page »'
+
+menu:
+  page-of: "<dark_gray>Page <page>/<pages>"
