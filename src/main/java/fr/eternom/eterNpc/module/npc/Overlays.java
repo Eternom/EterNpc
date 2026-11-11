@@ -127,7 +127,8 @@ final class Overlays {
                 if (!Objects.equals(display.text(), shown.text())) {
                     display.text(shown.text());
                 }
-                if (display.getLocation().distanceSquared(at) > 0.01) {
+                // Le PNJ a pu changer de monde : pas de distance entre deux mondes
+                if (!display.getWorld().equals(at.getWorld()) || display.getLocation().distanceSquared(at) > 0.01) {
                     display.teleport(at);
                 }
                 return;
