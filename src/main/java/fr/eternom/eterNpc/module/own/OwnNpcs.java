@@ -104,6 +104,11 @@ public class OwnNpcs {
         }, "PNJ d'EterNpc illisibles");
     }
 
+    /** Humeur d'un PNJ selon la réputation auprès de lui (lang/ > npc.mood.*). */
+    static String mood(double reputation) {
+        return reputation >= 150 ? "esteem" : reputation >= 60 ? "trust" : reputation >= 20 ? "like" : reputation >= 5 ? "known" : "stranger";
+    }
+
     /** Ratio de réputation d'un PNJ (« eternpc:fermier » ou « fermier ») : 1 par défaut. */
     public double ratio(String id) {
         String name = id.startsWith(OwnNpc.PREFIX) ? id.substring(OwnNpc.PREFIX.length()) : id;
@@ -291,6 +296,9 @@ public class OwnNpcs {
         }
         if (!dialogue.lines().isEmpty()) {
             npcs.say(player, npc.id(), messages.render(replace(dialogue.lines().getFirst(), values), TagResolver.empty()), BUBBLE);
+            // Son humeur envers ce joueur (réputation × ratio du PNJ, gardée en mémoire : pas de base ici)
+            double reputation = EterLib.get().getReputation().cachedTowards(player.getUniqueId(), npc.id());
+            player.sendMessage(messages.get(player, "npc.mood." + mood(reputation), TagResolver.resolver(Placeholder.component("name", name))));
         }
         if (dialogue.choices().isEmpty()) {
             EterLib.get().getActions().run(player, actions);

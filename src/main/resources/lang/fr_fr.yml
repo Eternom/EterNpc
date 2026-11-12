@@ -23,6 +23,12 @@ npc:
   cleaned: '<info><accent><count></accent> emplacement(s) supprimé(s).'
   no-permission: '<error>Ce PNJ ne te répond pas.'
   cooldown: '<error>Attends <accent><time>s</accent>.'
+  mood:
+    stranger: "<dark_gray>(<name><dark_gray> ne te connaît pas encore)"
+    known: "<dark_gray>(<name><dark_gray> te reconnaît)"
+    like: "<dark_gray>(<name><dark_gray> t'apprécie)"
+    trust: "<dark_gray>(<name><dark_gray> te fait confiance)"
+    esteem: "<dark_gray>(<name><dark_gray> te tient en haute estime)"
   dialogue:
     # <name> = nom du PNJ, <text> = la ligne
     line: '<name> <dark_gray>»</dark_gray> <info><text>'

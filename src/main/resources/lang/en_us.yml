@@ -23,6 +23,12 @@ npc:
   cleaned: '<info><accent><count></accent> placement(s) deleted.'
   no-permission: '<error>This NPC does not answer you.'
   cooldown: '<error>Wait <accent><time>s</accent>.'
+  mood:
+    stranger: "<dark_gray>(<name><dark_gray> does not know you yet)"
+    known: "<dark_gray>(<name><dark_gray> recognises you)"
+    like: "<dark_gray>(<name><dark_gray> likes you)"
+    trust: "<dark_gray>(<name><dark_gray> trusts you)"
+    esteem: "<dark_gray>(<name><dark_gray> holds you in high esteem)"
   dialogue:
     line: '<name> <dark_gray>»</dark_gray> <info><text>'
     choice: '<accent>[<choice>]</accent>'
